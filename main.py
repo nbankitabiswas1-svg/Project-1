@@ -1,290 +1,158 @@
 import streamlit as st
-from datetime import date
+import random
 
-# ---------------- PAGE SETTINGS ----------------
 st.set_page_config(
-    page_title="Study Planner",
-    page_icon="📚",
-    layout="wide"
+    page_title="A Little Magic for My Bestie 💗",
+    page_icon="💖",
+    layout="centered"
 )
 
-# ---------------- DESIGN - FIXED ----------------
 st.markdown("""
 <style>
 .stApp {
-    background-color: #F7F8FC;
-}
-.block-container {
-    padding-top: 2rem;
-    max-width: 1200px;
+    background: linear-gradient(135deg, #ffd6eb, #f5caff, #ffe6f2);
+    color: #a02d70;
 }
 
-/* FORCE ALL TEXT TO BE DARK - THIS FIXES YOUR ISSUE */
-.stApp, .stApp p, .stApp span, .stApp div, .stApp label, .stApp h1, .stApp h2, .stApp h3,
-.stMarkdown, .stMarkdown p, .stCaption, [data-testid="stWidgetLabel"] p {
-    color: #24264B !important;
+h1 {
+    color: #d63384;
+    text-align: center;
+    text-shadow: 0 0 15px #ff8ac4;
 }
 
-/* FORCE INPUTS TO BE WHITE WITH BLACK TEXT - FIXES BLACK SEARCH BAR */
-div[data-baseweb="base-input"], 
-div[data-baseweb="select"] > div,
-div[data-testid="stTextInput"] input,
-div[data-testid="stDateInput"] input,
-textarea {
-    background-color: white !important;
-    color: #24264B !important;
-    border-color: #E5E7F2 !important;
-}
-div[data-baseweb="base-input"] input,
-div[data-baseweb="select"] span,
-div[data-baseweb="select"] div {
-    color: #24264B !important;
+p, label {
+    color: #9c2870 !important;
 }
 
-/* Placeholder color */
-input::placeholder {
-    color: #888 !important;
+.stButton > button {
+    background: linear-gradient(90deg, #ff69b4, #da70d6);
+    color: white;
+    border: 2px solid white;
+    border-radius: 30px;
+    padding: 12px;
+    font-size: 17px;
+    box-shadow: 0 0 18px #ff69b4;
+    transition: 0.3s;
 }
 
-div[data-testid="stMetric"] {
-    background: white;
-    border: 1px solid #E5E7F2;
-    padding: 18px;
-    border-radius: 14px;
-}
-div[data-testid="stMetric"] label, div[data-testid="stMetric"] div {
-    color: #24264B !important;
+.stButton > button:hover {
+    box-shadow: 0 0 30px #ff1493;
+    transform: scale(1.03);
 }
 
-div[data-testid="stVerticalBlockBorderWrapper"] {
-    background: white;
-    border-radius: 14px;
+.magic-popup {
+    background: rgba(255, 255, 255, 0.88);
+    border: 3px solid #ff9ed2;
+    border-radius: 25px;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 0 30px #ff8ac4;
+    animation: appear 0.8s ease-out;
+    color: #b52b78;
+    font-size: 21px;
 }
-div[data-testid="stVerticalBlockBorderWrapper"] * {
-    color: #24264B !important;
+
+@keyframes appear {
+    from {opacity: 0; transform: scale(0.7);}
+    to {opacity: 1; transform: scale(1);}
+}
+
+.footer {
+    text-align: center;
+    color: #c13584;
+    font-size: 16px;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- DATA ----------------
-if "tasks" not in st.session_state:
-    st.session_state.tasks = []
+messages = {
+    "Sad 😢": [
+        "My precious girl, it's okay to cry. You don't have to be strong every second. If I were there, I'd hug you until your heart felt lighter. 💗🫂",
+        "Hey princess! 🌷 This is just a difficult chapter, not your whole story. Better days are coming, and you deserve every bit of happiness.",
+        "A little fairy told me that someone very special needs a hug today. Guess who? YOU! Sending you a million magical hugs! 🧚‍♀️💕"
+    ],
+    "Lonely 🥺": [
+        "Close your eyes for a second, bestie. Imagine me sitting beside you, holding your hand and saying, 'I'm so glad you exist.' 💞",
+        "Even on the days you feel forgotten, please remember that you are a beautiful soul who deserves love, care and kindness. 🌙💗"
+    ],
+    "Stressed 😵‍💫": [
+        "Shhh, my little star. ✨ You don't have to figure out your entire life tonight. Take a breath. One little step at a time.",
+        "Official royal decree 👑: My princess is allowed to rest, eat something yummy and stop worrying for five minutes! 💕"
+    ],
+    "Unmotivated 😴": [
+        "You are a little star, and stars shine even in the darkest skies. Keep going, my girl. I believe in you! 🌟",
+        "Your progress doesn't have to be perfect to be beautiful. Get up gently and try again. I'm cheering for you! 🎀"
+    ],
+    "Angry 😤": [
+        "Breathe in, breathe out, princess. 🌸 You can feel everything without letting one difficult moment control your whole day.",
+        "Sending you a pink bubble of peace! 🫧 Leave the stress outside for a moment. You deserve a little calm."
+    ],
+    "Happy 🥰": [
+        "ALERT! 🚨 The world's cutest smile has been spotted! Please keep smiling, bestie. You make ordinary days magical! 💖",
+        "If happiness were glitter, you'd have enough to decorate the entire universe! ✨🌷"
+    ]
+}
 
-if "next_id" not in st.session_state:
-    st.session_state.next_id = 1
+st.markdown("<h1>🩷 A Little Magic for You 🩷</h1>",
+            unsafe_allow_html=True)
 
-SUBJECTS = [
-    "Python Programming",
-    "Engineering Mathematics",
-    "Data Structures",
-    "Artificial Intelligence",
-    "Other"
-]
-
-PRIORITIES = ["High", "Medium", "Low"]
-
-# ---------------- HEADER ----------------
-st.title("📚 Student Productivity Planner")
-st.write("Plan your studies, manage assignments, and track your progress.")
-st.divider()
-
-# ---------------- DASHBOARD ----------------
-tasks = st.session_state.tasks
-
-total = len(tasks)
-completed = sum(1 for task in tasks if task["completed"])
-pending = total - completed
-progress = completed / total if total else 0
-
-col1, col2, col3, col4 = st.columns(4)
-
-col1.metric("📋 Total Tasks", total)
-col2.metric("✅ Completed", completed)
-col3.metric("⏳ Pending", pending)
-col4.metric("📈 Progress", f"{progress * 100:.0f}%")
-
-st.progress(progress)
-
-# ---------------- ADD TASK ----------------
-st.subheader("➕ Add a New Task")
-
-with st.form("add_task_form", clear_on_submit=True):
-    task_name = st.text_input(
-        "Task name",
-        placeholder="e.g. Complete Python assignment"
-    )
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        subject = st.selectbox("Subject", SUBJECTS)
-        deadline = st.date_input("Deadline", value=date.today())
-
-    with col2:
-        priority = st.selectbox("Priority", PRIORITIES)
-        task_type = st.selectbox(
-            "Task type",
-            ["Assignment", "Study", "Exam Preparation", "Project"]
-        )
-
-    description = st.text_input(
-        "Notes (optional)",
-        placeholder="Add a short note"
-    )
-
-    submitted = st.form_submit_button(
-        "Add Task",
-        use_container_width=True
-    )
-
-if submitted:
-    if task_name.strip():
-        new_task = {
-            "id": st.session_state.next_id,
-            "name": task_name.strip(),
-            "subject": subject,
-            "deadline": deadline,
-            "priority": priority,
-            "type": task_type,
-            "notes": description.strip(),
-            "completed": False
-        }
-
-        st.session_state.tasks.append(new_task)
-        st.session_state.next_id += 1
-
-        st.success("Task added successfully!")
-        st.rerun()
-    else:
-        st.warning("Please enter a task name.")
-
-# ---------------- SEARCH AND FILTERS ----------------
-st.divider()
-st.subheader("📝 Your Study Tasks")
-
-search_text = st.text_input(
-    "🔍 Search tasks",
-    placeholder="Search by task name or notes"
+st.markdown(
+    "<p style='text-align:center;font-size:18px;'>"
+    "✨ A tiny magical world made just for you ✨</p>",
+    unsafe_allow_html=True
 )
 
-filter_col1, filter_col2, filter_col3 = st.columns(3)
+st.markdown(
+    "<p style='text-align:center;font-size:32px;'>"
+    "🦋 💗 🧚‍♀️ 💗 🦋</p>",
+    unsafe_allow_html=True
+)
 
-with filter_col1:
-    selected_subject = st.selectbox(
-        "Filter by subject",
-        ["All Subjects"] + SUBJECTS
+st.write("")
+
+mood = st.selectbox(
+    "🌸 Tell your fairy how you're feeling...",
+    list(messages.keys())
+)
+
+if st.button("✨ Open your magical surprise 💌",
+             use_container_width=True):
+    quote = random.choice(messages[mood])
+
+    st.session_state["message"] = quote
+    st.session_state["mood"] = mood
+
+if "message" in st.session_state:
+    st.markdown(
+        f"""
+        <div class="magic-popup">
+            <div style="font-size:38px;">🧚‍♀️ ✨ 💗 ✨</div>
+            <h3 style="color:#e754a1;">
+                A little message just for you!
+            </h3>
+            <p>{st.session_state["message"]}</p>
+            <div style="font-size:30px;">🦋 🌷 💖 🌷 🦋</div>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
-with filter_col2:
-    selected_status = st.selectbox(
-        "Filter by status",
-        ["All Tasks", "Pending", "Completed"]
-    )
+    st.write("")
 
-with filter_col3:
-    selected_priority = st.selectbox(
-        "Filter by priority",
-        ["All Priorities"] + PRIORITIES
-    )
+    if st.button("💖 Another magical message"):
+        st.session_state["message"] = random.choice(
+            messages[st.session_state["mood"]]
+        )
+        st.rerun()
 
-filtered_tasks = []
+st.markdown("---")
 
-for task in st.session_state.tasks:
-    matches_search = (
-        search_text.strip().lower() in task["name"].lower()
-        or search_text.strip().lower() in task["notes"].lower()
-    )
-
-    matches_subject = (
-        selected_subject == "All Subjects"
-        or task["subject"] == selected_subject
-    )
-
-    matches_status = (
-        selected_status == "All Tasks"
-        or (selected_status == "Completed" and task["completed"])
-        or (selected_status == "Pending" and not task["completed"])
-    )
-
-    matches_priority = (
-        selected_priority == "All Priorities"
-        or task["priority"] == selected_priority
-    )
-
-    if (
-        matches_search
-        and matches_subject
-        and matches_status
-        and matches_priority
-    ):
-        filtered_tasks.append(task)
-
-# ---------------- DISPLAY TASKS ----------------
-if not filtered_tasks:
-    st.info("No matching tasks yet. Add a task using the form above.")
-else:
-    for task in filtered_tasks:
-        with st.container(border=True):
-            task_col, action_col = st.columns([4, 1])
-
-            with task_col:
-                if task["completed"]:
-                    st.markdown(f"### ✅ ~~{task['name']}~~")
-                else:
-                    st.markdown(f"### 📘 {task['name']}")
-
-                st.write(
-                    f"**Subject:** {task['subject']}  ·  "
-                    f"**Type:** {task['type']}"
-                )
-
-                st.write(
-                    f"**Deadline:** {task['deadline'].strftime('%d %b %Y')}  ·  "
-                    f"**Priority:** {task['priority']}"
-                )
-
-                if task["notes"]:
-                    st.caption(task["notes"])
-
-                if task["deadline"] < date.today() and not task["completed"]:
-                    st.warning("Deadline has passed!")
-
-            with action_col:
-                if not task["completed"]:
-                    if st.button(
-                        "Complete",
-                        key=f"complete_{task['id']}",
-                        use_container_width=True
-                    ):
-                        for saved_task in st.session_state.tasks:
-                            if saved_task["id"] == task["id"]:
-                                saved_task["completed"] = True
-                        st.rerun()
-                else:
-                    if st.button(
-                        "Undo",
-                        key=f"undo_{task['id']}",
-                        use_container_width=True
-                    ):
-                        for saved_task in st.session_state.tasks:
-                            if saved_task["id"] == task["id"]:
-                                saved_task["completed"] = False
-                        st.rerun()
-
-                if st.button(
-                    "Delete",
-                    key=f"delete_{task['id']}",
-                    use_container_width=True
-                ):
-                    st.session_state.tasks = [
-                        saved_task
-                        for saved_task in st.session_state.tasks
-                        if saved_task["id"] != task["id"]
-                    ]
-                    st.rerun()
-
-# ---------------- FOOTER ----------------
-st.divider()
-st.caption(
-    "Study Planner | Built with Python and Streamlit"
+st.markdown(
+    """
+    <div class="footer">
+        🌙 Made with a little pink magic and lots of love 🌙<br>
+        Never forget how special you are, bestie. 💗
+    </div>
+    """,
+    unsafe_allow_html=True
 )

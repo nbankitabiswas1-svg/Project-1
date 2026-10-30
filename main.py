@@ -1,50 +1,267 @@
 import streamlit as st
+from datetime import date
 
-st.title("Campus Lost & Found")
-st.write("Report lost items and search for them.")
+# ---------------- PAGE SETTINGS ----------------
 
-if "items" not in st.session_state:
-    st.session_state.items = []
+st.set_page_config(
+    page_title="Study Planner",
+    page_icon="📚",
+    layout="wide"
+)
 
-st.header("Add an Item")
+# ---------------- DESIGN ----------------
 
-name = st.text_input("Item name")
-location = st.text_input("Where was it lost or found?")
+st.markdown("""
+<style>
+.stApp {
+    background-color: #F7F8FC;
+}
+.block-container {
+    padding-top: 2rem;
+    max-width: 1200px;
+}
+h1, h2, h3 {
+    color: #24264B;
+}
+div[data-testid="stMetric"] {
+    background: white;
+    border: 1px solid #E5E7F2;
+    padding: 18px;
+    border-radius: 14px;
+}
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    background: white;
+    border-radius: 14px;
+}
+</style>
+""", unsafe_allow_html=True)
 
-if st.button("Add Item"):
-    if name.strip() and location.strip():
-        st.session_state.items.append({
-            "name": name.strip(),
-            "location": location.strip()
-        })
-        st.success("Item added successfully!")
+# ---------------- DATA ----------------
+
+if "tasks" not in st.session_state:
+    st.session_state.tasks = []
+
+if "next_id" not in st.session_state:
+    st.session_state.next_id = 1
+
+SUBJECTS = [
+    "Python Programming",
+    "Engineering Mathematics",
+    "Data Structures",
+    "Artificial Intelligence",
+    "Other"
+]
+
+PRIORITIES = ["High", "Medium", "Low"]
+
+# ---------------- HEADER ----------------
+
+st.title("📚 Student Productivity Planner")
+st.write("Plan your studies, manage assignments, and track your progress.")
+st.divider()
+
+# ---------------- DASHBOARD ----------------
+
+tasks = st.session_state.tasks
+
+total = len(tasks)
+completed = sum(1 for task in tasks if task["completed"])
+pending = total - completed
+progress = completed / total if total else 0
+
+col1, col2, col3, col4 = st.columns(4)
+
+col1.metric("📋 Total Tasks", total)
+col2.metric("✅ Completed", completed)
+col3.metric("⏳ Pending", pending)
+col4.metric("📈 Progress", f"{progress * 100:.0f}%")
+
+st.progress(progress)
+
+# ---------------- ADD TASK ----------------
+
+st.subheader("➕ Add a New Task")
+
+with st.form("add_task_form", clear_on_submit=True):
+    task_name = st.text_input(
+        "Task name",
+        placeholder="e.g. Complete Python assignment"
+    )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        subject = st.selectbox("Subject", SUBJECTS)
+        deadline = st.date_input("Deadline", value=date.today())
+
+    with col2:
+        priority = st.selectbox("Priority", PRIORITIES)
+        task_type = st.selectbox(
+            "Task type",
+            ["Assignment", "Study", "Exam Preparation", "Project"]
+        )
+
+    description = st.text_input(
+        "Notes (optional)",
+        placeholder="Add a short note"
+    )
+
+    submitted = st.form_submit_button(
+        "Add Task",
+        use_container_width=True
+    )
+
+if submitted:
+    if task_name.strip():
+        new_task = {
+            "id": st.session_state.next_id,
+            "name": task_name.strip(),
+            "subject": subject,
+            "deadline": deadline,
+            "priority": priority,
+            "type": task_type,
+            "notes": description.strip(),
+            "completed": False
+        }
+
+        st.session_state.tasks.append(new_task)
+        st.session_state.next_id += 1
+
+        st.success("Task added successfully!")
+        st.rerun()
     else:
-        st.warning("Please fill in both fields.")
+        st.warning("Please enter a task name.")
 
-st.header("Search for an Item")
-search = st.text_input("Enter item name")
+# ---------------- SEARCH AND FILTERS ----------------
 
-if st.button("Search Item"):
-    results = [
-        item for item in st.session_state.items
-        if search.lower() in item["name"].lower()
-    ]
+st.divider()
+st.subheader("📝 Your Study Tasks")
 
-    if results:
-        for item in results:
-            st.write("Item:", item["name"])
-            st.write("Location:", item["location"])
-    else:
-        st.info("No matching items found.")
+search_text = st.text_input(
+    "🔍 Search tasks",
+    placeholder="Search by task name or notes"
+)
 
-st.header("All Items")
+filter_col1, filter_col2, filter_col3 = st.columns(3)
 
-all_items = st.session_state.get("items", [])
+with filter_col1:
+    selected_subject = st.selectbox(
+        "Filter by subject",
+        ["All Subjects"] + SUBJECTS
+    )
 
-if len(all_items) == 0:
-    st.info("No items have been added yet.")
+with filter_col2:
+    selected_status = st.selectbox(
+        "Filter by status",
+        ["All Tasks", "Pending", "Completed"]
+    )
+
+with filter_col3:
+    selected_priority = st.selectbox(
+        "Filter by priority",
+        ["All Priorities"] + PRIORITIES
+    )
+
+filtered_tasks = []
+
+for task in st.session_state.tasks:
+    matches_search = (
+        search_text.strip().lower() in task["name"].lower()
+        or search_text.strip().lower() in task["notes"].lower()
+    )
+
+    matches_subject = (
+        selected_subject == "All Subjects"
+        or task["subject"] == selected_subject
+    )
+
+    matches_status = (
+        selected_status == "All Tasks"
+        or (selected_status == "Completed" and task["completed"])
+        or (selected_status == "Pending" and not task["completed"])
+    )
+
+    matches_priority = (
+        selected_priority == "All Priorities"
+        or task["priority"] == selected_priority
+    )
+
+    if (
+        matches_search
+        and matches_subject
+        and matches_status
+        and matches_priority
+    ):
+        filtered_tasks.append(task)
+
+# ---------------- DISPLAY TASKS ----------------
+
+if not filtered_tasks:
+    st.info("No matching tasks yet. Add a task using the form above.")
 else:
-    for item in all_items:
-        st.write("Item:", item["name"])
-        st.write("Location:", item["location"])
-        st.divider()
+    for task in filtered_tasks:
+        with st.container(border=True):
+            task_col, action_col = st.columns([4, 1])
+
+            with task_col:
+                if task["completed"]:
+                    st.markdown(f"### ✅ ~~{task['name']}~~")
+                else:
+                    st.markdown(f"### 📘 {task['name']}")
+
+                st.write(
+                    f"**Subject:** {task['subject']}  ·  "
+                    f"**Type:** {task['type']}"
+                )
+
+                st.write(
+                    f"**Deadline:** {task['deadline'].strftime('%d %b %Y')}  ·  "
+                    f"**Priority:** {task['priority']}"
+                )
+
+                if task["notes"]:
+                    st.caption(task["notes"])
+
+                if task["deadline"] < date.today() and not task["completed"]:
+                    st.warning("Deadline has passed!")
+
+            with action_col:
+                if not task["completed"]:
+                    if st.button(
+                        "Complete",
+                        key=f"complete_{task['id']}",
+                        use_container_width=True
+                    ):
+                        for saved_task in st.session_state.tasks:
+                            if saved_task["id"] == task["id"]:
+                                saved_task["completed"] = True
+                        st.rerun()
+                else:
+                    if st.button(
+                        "Undo",
+                        key=f"undo_{task['id']}",
+                        use_container_width=True
+                    ):
+                        for saved_task in st.session_state.tasks:
+                            if saved_task["id"] == task["id"]:
+                                saved_task["completed"] = False
+                        st.rerun()
+
+                if st.button(
+                    "Delete",
+                    key=f"delete_{task['id']}",
+                    use_container_width=True
+                ):
+                    st.session_state.tasks = [
+                        saved_task
+                        for saved_task in st.session_state.tasks
+                        if saved_task["id"] != task["id"]
+                    ]
+                    st.rerun()
+
+# ---------------- FOOTER ----------------
+
+st.divider()
+st.caption(
+    "Study Planner | Built with Python and Streamlit"
+)

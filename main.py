@@ -39,10 +39,12 @@ if st.button("Search Item"):
 
 st.header("All Items")
 
-if st.session_state.items:
-    for item in st.session_state.items:
-        st.write("Item:", item.get("name", "Unknown"))
-        st.write("Location:", item.get("location", "Unknown"))
-        st.divider()
-else:
+all_items = st.session_state.get("items", [])
+
+if len(all_items) == 0:
     st.info("No items have been added yet.")
+else:
+    for item in all_items:
+        st.write("Item:", item["name"])
+        st.write("Location:", item["location"])
+        st.divider()

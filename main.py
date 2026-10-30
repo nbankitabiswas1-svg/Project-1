@@ -2,20 +2,14 @@ import streamlit as st
 from datetime import date
 
 # ---------------- PAGE SETTINGS ----------------
-
 st.set_page_config(
     page_title="Study Planner",
     page_icon="📚",
     layout="wide"
 )
 
-# ---------------- DESIGN ----------------
-
+# ---------------- DESIGN - FIXED ----------------
 st.markdown("""
-/*Force task details to black*/
-div[data-testid="stVerticalBlockBorderWrapper"] * {
-    color: black !important;
-}
 <style>
 .stApp {
     background-color: #F7F8FC;
@@ -24,24 +18,55 @@ div[data-testid="stVerticalBlockBorderWrapper"] * {
     padding-top: 2rem;
     max-width: 1200px;
 }
-h1, h2, h3 {
-    color: #24264B;
+
+/* FORCE ALL TEXT TO BE DARK - THIS FIXES YOUR ISSUE */
+.stApp, .stApp p, .stApp span, .stApp div, .stApp label, .stApp h1, .stApp h2, .stApp h3,
+.stMarkdown, .stMarkdown p, .stCaption, [data-testid="stWidgetLabel"] p {
+    color: #24264B !important;
 }
+
+/* FORCE INPUTS TO BE WHITE WITH BLACK TEXT - FIXES BLACK SEARCH BAR */
+div[data-baseweb="base-input"], 
+div[data-baseweb="select"] > div,
+div[data-testid="stTextInput"] input,
+div[data-testid="stDateInput"] input,
+textarea {
+    background-color: white !important;
+    color: #24264B !important;
+    border-color: #E5E7F2 !important;
+}
+div[data-baseweb="base-input"] input,
+div[data-baseweb="select"] span,
+div[data-baseweb="select"] div {
+    color: #24264B !important;
+}
+
+/* Placeholder color */
+input::placeholder {
+    color: #888 !important;
+}
+
 div[data-testid="stMetric"] {
     background: white;
     border: 1px solid #E5E7F2;
     padding: 18px;
     border-radius: 14px;
 }
+div[data-testid="stMetric"] label, div[data-testid="stMetric"] div {
+    color: #24264B !important;
+}
+
 div[data-testid="stVerticalBlockBorderWrapper"] {
     background: white;
     border-radius: 14px;
+}
+div[data-testid="stVerticalBlockBorderWrapper"] * {
+    color: #24264B !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------- DATA ----------------
-
 if "tasks" not in st.session_state:
     st.session_state.tasks = []
 
@@ -59,13 +84,11 @@ SUBJECTS = [
 PRIORITIES = ["High", "Medium", "Low"]
 
 # ---------------- HEADER ----------------
-
 st.title("📚 Student Productivity Planner")
 st.write("Plan your studies, manage assignments, and track your progress.")
 st.divider()
 
 # ---------------- DASHBOARD ----------------
-
 tasks = st.session_state.tasks
 
 total = len(tasks)
@@ -83,7 +106,6 @@ col4.metric("📈 Progress", f"{progress * 100:.0f}%")
 st.progress(progress)
 
 # ---------------- ADD TASK ----------------
-
 st.subheader("➕ Add a New Task")
 
 with st.form("add_task_form", clear_on_submit=True):
@@ -137,7 +159,6 @@ if submitted:
         st.warning("Please enter a task name.")
 
 # ---------------- SEARCH AND FILTERS ----------------
-
 st.divider()
 st.subheader("📝 Your Study Tasks")
 
@@ -199,7 +220,6 @@ for task in st.session_state.tasks:
         filtered_tasks.append(task)
 
 # ---------------- DISPLAY TASKS ----------------
-
 if not filtered_tasks:
     st.info("No matching tasks yet. Add a task using the form above.")
 else:
@@ -264,7 +284,6 @@ else:
                     st.rerun()
 
 # ---------------- FOOTER ----------------
-
 st.divider()
 st.caption(
     "Study Planner | Built with Python and Streamlit"

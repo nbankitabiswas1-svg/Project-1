@@ -14,6 +14,42 @@ st.set_page_config(
 st.markdown("""
 <style>
 .stApp {
+    background-color: #F4F6FC;
+    color: #202447;
+}
+
+.block-container {
+    padding-top: 2rem;
+    max-width: 1200px;
+}
+
+h1, h2, h3 {
+    color: #202447 !important;
+}
+
+p, label, span, div {
+    color: #202447;
+}
+
+div[data-testid="stMetric"] {
+    background-color: #FFFFFF;
+    border: 1px solid #DDE2F0;
+    padding: 18px;
+    border-radius: 14px;
+}
+
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    background-color: #FFFFFF;
+    border-radius: 14px;
+}
+
+div[data-testid="stMarkdownContainer"] p {
+    color: #202447 !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+.stApp {
     background-color: #F7F8FC;
 }
 .block-container {

@@ -12,6 +12,10 @@ st.set_page_config(
 # ---------------- DESIGN ----------------
 
 st.markdown("""
+/*Force task details to black*/
+div[data-testid="stVerticalBlockBorderWrapper"] * {
+    color: #000000 !important;
+    }
 <style>
 .stApp {
     background-color: #F7F8FC;

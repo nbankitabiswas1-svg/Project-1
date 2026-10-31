@@ -1,135 +1,98 @@
 import streamlit as st
 import random
-import os
 
 st.set_page_config(
-    page_title="My Werewolf Prince",
-    page_icon="🐺",
+    page_title="Enchanted Dreamland",
+    page_icon="🧚",
     layout="centered"
 )
 
-# Fantasy appearance
 st.markdown("""
 <style>
 .stApp {
-    background: linear-gradient(160deg, #100d20, #302044, #101426);
-    color: #fff1ff;
+    background: linear-gradient(
+        135deg, #170d30, #49265f, #17152f
+    );
+    color: #fff0ff;
 }
-h1, h2, p, label {
-    color: #fff1ff !important;
+h1, h2, h3, p, label {
+    color: #fff0ff !important;
 }
-[data-testid="stChatMessage"] {
-    background: rgba(180, 140, 220, 0.12);
-    border: 1px solid #72558c;
+.stButton > button {
+    background: #d7a8ff;
+    color: #29143d;
     border-radius: 18px;
-    padding: 12px;
+    border: none;
+    padding: 10px 22px;
+    font-weight: bold;
 }
-.stChatInput textarea {
-    color: white !important;
+.stButton > button:hover {
+    background: #ffc8e8;
+    color: #29143d;
+}
+div[data-testid="stTextInput"] input {
+    background: #fff0ff;
+    color: #301641;
 }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🌙 My Werewolf Prince")
-st.caption("A moonlit castle. A dangerous prince. A love story.")
+st.title("🧚 Enchanted Dreamland")
+st.subheader("✨ A little magic is waiting for you...")
 
-# Add werewolf.png to the same folder as main.py
-if os.path.exists("werewolf.png"):
-    st.image("werewolf.png", use_container_width=True)
-else:
-    st.markdown("## 🐺 Prince Lucien")
-    st.caption("Upload a fantasy werewolf portrait as werewolf.png")
+st.write(
+    "Welcome, little dreamer! "
+    "The stars have been waiting for your arrival. 🌙"
+)
 
-st.markdown("### 🖤 Your future husband")
-st.write("Silver-haired Werewolf King • Romantic • Playful")
+name = st.text_input("💌 What shall we call you?")
 
-# Dialogue rules
-def prince_reply(message):
-    text = message.lower()
+power = st.selectbox(
+    "🔮 Choose your magical power",
+    ["Moon Magic 🌙", "Love Magic 💗",
+     "Starlight ✨", "Nature Magic 🌿"]
+)
 
-    if any(word in text for word in ["hello", "hi", "hey"]):
-        return random.choice([
-            "Hello, darling! ❤️ My little wife, ready to marry me?",
-            "There you are, my princess! I've been waiting all day for you.",
-            "Come here, sweetheart. Your wolf missed you terribly. 🐺"
-        ])
+if st.button("Reveal My Destiny ✨"):
 
-    elif any(word in text for word in ["marry", "wedding", "wife"]):
-        return random.choice([
-            "YES! 💍 I've already imagined you walking towards me in a moonlit wedding dress!",
-            "My little wife! Say yes, darling, and I'll give you the moonlit castle.",
-            "*He kneels and opens a velvet ring box.* Will you marry me, my princess?"
-        ])
-
-    elif any(word in text for word in ["sad", "cry", "hurt", "upset"]):
-        return random.choice([
-            "Oh, my little princess. Who hurt you? Come here. You don't have to hide your tears from me. ❤️",
-            "*He gently opens his arms.* Come to me, darling. Tell me everything. I'm listening.",
-            "My little wife, you deserve tenderness. Tell me what's troubling your heart."
-        ])
-
-    elif any(word in text for word in ["love", "miss", "kiss"]):
-        return random.choice([
-            "I love you, darling. Now come here and give your wolf a kiss. 💋",
-            "You have no idea what you do to my heart, little princess.",
-            "*He smiles and kisses your forehead.* My favourite person in every universe."
-        ])
-
-    elif any(word in text for word in ["angry", "mad", "jealous"]):
-        return random.choice([
-            "Oh, sweetheart. Tell me what happened. I want to understand.",
-            "*His ears twitch.* My little princess is angry with me? Tell me why, darling.",
-            "Come on, love. Let's talk about it. I don't want you feeling unheard."
-        ])
-
-    elif any(word in text for word in ["bye", "goodnight", "sleep"]):
-        return random.choice([
-            "Goodnight, my little moonbeam. Dream of our castle. 🌙",
-            "Already leaving me, darling? *He smiles.* Sleep well, my princess.",
-            "Sweet dreams, my love. I'll be right here when you return."
-        ])
+    if name.strip() == "":
+        st.warning("The fairies need your name first! 🧚")
 
     else:
-        return random.choice([
-            "Really, darling? ❤️ Tell me more. Your wolf is listening.",
-            "*He tilts his head, his amber eyes watching you.* And what else, my little princess?",
-            "Come sit beside me, sweetheart. I want to hear everything.",
-            "*He takes your hand and smiles.* You know you can tell me anything, don't you?"
-        ])
-
-# Start the conversation
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {
-            "role": "assistant",
-            "content": "Hello, darling. 💍 My little wife, are you ready to marry me? I've been waiting for you all evening."
+        prophecies = {
+            "Moon Magic 🌙": [
+                "The moon will guide you through every darkness.",
+                "A beautiful secret awaits you beneath the stars.",
+                "Your quiet strength is your greatest magic."
+            ],
+            "Love Magic 💗": [
+                "Your kindness will create a little miracle.",
+                "A beautiful chapter of love awaits your heart.",
+                "Never forget that you deserve a love that feels safe."
+            ],
+            "Starlight ✨": [
+                "You were born to chase extraordinary dreams.",
+                "A surprising adventure is closer than you think.",
+                "Your brightest days are still waiting to unfold."
+            ],
+            "Nature Magic 🌿": [
+                "Like a flower, you will bloom in your own time.",
+                "Peace and wonderful discoveries await you.",
+                "Even the smallest seed can grow into a mighty tree."
+            ]
         }
-    ]
 
-# Display chat history
-for msg in st.session_state.messages:
-    avatar = "🐺" if msg["role"] == "assistant" else "💗"
-    with st.chat_message(msg["role"], avatar=avatar):
-        st.markdown(msg["content"])
+        st.balloons()
+        st.markdown("---")
+        st.header(f"🌷 Welcome to your destiny, {name}!")
+        st.write(f"Your chosen power: **{power}**")
 
-# Let the user type anything
-user_text = st.chat_input("Say something to your werewolf prince...")
+        st.success(
+            "📜 Your Magical Prophecy\n\n"
+            + random.choice(prophecies[power])
+        )
 
-if user_text:
-    st.session_state.messages.append({
-        "role": "user",
-        "content": user_text
-    })
-
-    with st.chat_message("user", avatar="💗"):
-        st.markdown(user_text)
-
-    answer = prince_reply(user_text)
-
-    st.session_state.messages.append({
-        "role": "assistant",
-        "content": answer
-    })
-
-    with st.chat_message("assistant", avatar="🐺"):
-        st.markdown(answer)
+        st.caption(
+            "✨ Remember: your real magic is what you "
+            "choose to do with your life. ✨"
+        )

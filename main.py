@@ -1,638 +1,623 @@
 import streamlit as st
-import json
-import os
-from datetime import date
+import random
+import time
 
 st.set_page_config(
-    page_title="Modison Group | CEO Office",
-    page_icon="👑",
+    page_title="Haunted Halloween Night",
+    page_icon="🎃",
     layout="wide"
 )
 
-# ---------- STYLE ----------
+# -------------------- STYLE --------------------
+
 st.markdown("""
 <style>
 .stApp {
-    background: #0b1120;
-    color: #f1f5f9;
-}
-[data-testid="stSidebar"] {
-    background: #111a2b;
+    background:
+        radial-gradient(ellipse at top, #39204e 0%, #160d25 48%, #080711 100%);
+    color: #fff0dc;
 }
 h1, h2, h3 {
-    color: #e8c779 !important;
+    color: #ff9e35 !important;
 }
-p, label {
-    color: #dbe3ef;
+p, label, li {
+    color: #f6e9ff;
 }
-div[data-testid="stMetric"] {
-    background: #151f32;
-    border: 1px solid #35425a;
-    border-radius: 12px;
-    padding: 15px;
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #1c102c, #090711);
 }
 div.stButton > button {
-    background: #c7a55e;
-    color: #111827;
-    border-radius: 8px;
-    border: none;
+    background: linear-gradient(135deg, #ff8c24, #e34816);
+    color: white;
+    border: 1px solid #ffbf69;
+    border-radius: 14px;
+    font-weight: bold;
+    min-height: 45px;
+    transition: 0.2s;
+}
+div.stButton > button:hover {
+    background: #ffb347;
+    color: #180b20;
+    border: 1px solid white;
+}
+.haunted-banner {
+    background: linear-gradient(120deg, #351446, #171024, #4b1e2d);
+    border: 1px solid #a45a9c;
+    border-radius: 22px;
+    padding: 28px;
+    text-align: center;
+    box-shadow: 0 0 30px #612b6644;
+}
+.big-emoji {
+    font-size: 65px;
+    text-align: center;
+}
+.ghost-card {
+    background: #241633;
+    border: 1px solid #75458b;
+    padding: 20px;
+    border-radius: 18px;
+    margin: 8px 0;
+}
+.story {
+    background: #100d1b;
+    border-left: 5px solid #ff8c24;
+    padding: 20px;
+    border-radius: 10px;
+    line-height: 1.9;
+}
+.small-note {
+    color: #cbb5df;
+    text-align: center;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- DATA ----------
-DATA_FILE = "modison_data.json"
+# -------------------- GAME DATA --------------------
 
-def load_data():
-    default = {
-        "projects": [
-            {
-                "name": "Project Orion AI",
-                "department": "Technology",
-                "budget": 18.0,
-                "progress": 68,
-                "status": "In Progress"
-            },
-            {
-                "name": "Global Expansion",
-                "department": "Strategy",
-                "budget": 35.0,
-                "progress": 32,
-                "status": "In Progress"
-            },
-            {
-                "name": "Brand Renaissance",
-                "department": "Marketing",
-                "budget": 8.5,
-                "progress": 82,
-                "status": "In Progress"
-            }
-        ],
-        "tasks": [
-            {
-                "name": "Review growth strategy",
-                "priority": "High",
-                "done": False
-            },
-            {
-                "name": "Approve marketing proposal",
-                "priority": "High",
-                "done": False
-            },
-            {
-                "name": "Review AI investment plan",
-                "priority": "Medium",
-                "done": False
-            }
-        ],
-        "decisions": [],
-        "notes": []
+if "candy" not in st.session_state:
+    st.session_state.candy = 0
+if "visited" not in st.session_state:
+    st.session_state.visited = []
+if "chat" not in st.session_state:
+    st.session_state.chat = []
+if "quiz_score" not in st.session_state:
+    st.session_state.quiz_score = 0
+if "quiz_done" not in st.session_state:
+    st.session_state.quiz_done = False
+if "quiz_question" not in st.session_state:
+    st.session_state.quiz_question = None
+if "story" not in st.session_state:
+    st.session_state.story = None
+if "fortune" not in st.session_state:
+    st.session_state.fortune = None
+
+# -------------------- SIDEBAR --------------------
+
+st.sidebar.markdown("# 🎃 HALLOWEEN")
+st.sidebar.caption("Your midnight adventure begins...")
+
+page = st.sidebar.radio(
+    "Choose your destination",
+    [
+        "🏰 Haunted Home",
+        "🚪 Explore the Mansion",
+        "👻 Talk to a Ghost",
+        "🔮 Fortune Teller",
+        "📖 Spooky Story",
+        "🍬 Trick or Treat",
+        "🧠 Halloween Quiz",
+        "🦇 Creature Gallery"
+    ]
+)
+
+st.sidebar.divider()
+st.sidebar.metric("🍬 Candy collected", st.session_state.candy)
+st.sidebar.write(
+    f"🚪 Rooms explored: {len(st.session_state.visited)}/5"
+)
+st.sidebar.caption("Best experienced after dark. 🌙")
+
+# -------------------- HOME --------------------
+
+if page == "🏰 Haunted Home":
+
+    st.markdown("""
+    <div class="haunted-banner">
+        <div style="font-size:75px">🎃 🦇 👻</div>
+        <h1 style="font-size:43px">HAUNTED HALLOWEEN NIGHT</h1>
+        <h3 style="color:#e9b4ff !important">
+            One night. One haunted mansion. Countless secrets.
+        </h3>
+        <p>
+        The moon is rising. The gates are opening.
+        Something inside the mansion knows your name...
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.write("")
+    a, b, c = st.columns(3)
+
+    with a:
+        st.markdown("### 🏚️")
+        st.markdown("**Explore**")
+        st.write("Unlock the secrets hidden inside five mysterious rooms.")
+
+    with b:
+        st.markdown("### 👻")
+        st.markdown("**Meet the Spirits**")
+        st.write("Speak with the ghost who has been waiting for you.")
+
+    with c:
+        st.markdown("### 🔮")
+        st.markdown("**Discover Your Fate**")
+        st.write("Ask the fortune teller what awaits you at midnight.")
+
+    st.divider()
+    st.subheader("🌙 The Midnight Invitation")
+
+    st.write("""
+    Dear visitor,
+
+    You have been invited to Blackthorn Manor.
+
+    At midnight, the clock will strike thirteen times.
+    A door that has been locked for a hundred years will open.
+    Your mission is to explore the mansion, collect enchanted candy,
+    uncover a ghost's secret, and survive the Halloween night.
+
+    **Will you enter?**
+    """)
+
+    if st.button("🕯️ ENTER THE HAUNTED MANSION", use_container_width=True):
+        st.session_state.visited.append("Entrance Hall")
+        st.success("The iron gates creak open. Welcome to Blackthorn Manor!")
+        st.balloons()
+
+    st.markdown(
+        '<p class="small-note">October 31 • The witching hour approaches...</p>',
+        unsafe_allow_html=True
+    )
+
+# -------------------- MANSION --------------------
+
+elif page == "🚪 Explore the Mansion":
+
+    st.title("🏚️ Explore Blackthorn Manor")
+    st.write("Choose a door. Every room holds a different secret.")
+
+    rooms = {
+        "🕯️ Candlelit Hall": (
+            "A thousand candles flicker, although there is no wind. "
+            "A portrait follows your movements with its eyes."
+        ),
+        "🪞 The Mirror Room": (
+            "Your reflection smiles a second later than you do. "
+            "Behind the glass, a shadow raises its hand."
+        ),
+        "📚 Forbidden Library": (
+            "Dusty books whisper forgotten names. One book opens "
+            "by itself to a page describing tonight's visitor."
+        ),
+        "⚰️ The Forgotten Crypt": (
+            "Cold mist curls around ancient stone coffins. "
+            "A silver key glows beneath a cracked tombstone."
+        ),
+        "🧙 The Witch's Kitchen": (
+            "A purple potion bubbles in a copper cauldron. "
+            "A black cat guards a jar filled with glowing stars."
+        )
     }
 
-    if os.path.exists(DATA_FILE):
-        try:
-            with open(DATA_FILE, "r", encoding="utf-8") as file:
-                saved = json.load(file)
-            for key in default:
-                if key not in saved:
-                    saved[key] = default[key]
-            return saved
-        except (OSError, ValueError):
-            pass
+    for room, description in rooms.items():
+        with st.expander(room):
+            st.write(description)
 
-    return default
-
-if "data" not in st.session_state:
-    st.session_state.data = load_data()
-
-def save_data():
-    try:
-        with open(DATA_FILE, "w", encoding="utf-8") as file:
-            json.dump(
-                st.session_state.data,
-                file,
-                indent=4,
-                ensure_ascii=False
-            )
-        return True
-    except OSError:
-        return False
-
-# ---------- SIDEBAR ----------
-with st.sidebar:
-    st.markdown("# ◈ MODISON")
-    st.caption("GROUP • CEO COMMAND CENTER")
-    st.markdown("---")
-    st.markdown("### 👑 Ankita Biswas")
-    st.caption("Chief Executive Officer")
-
-    page = st.radio(
-        "NAVIGATION",
-        [
-            "CEO Dashboard",
-            "Corporate Strategy",
-            "Project Portfolio",
-            "Finance & Planning",
-            "Marketing & Growth",
-            "Boardroom",
-            "CEO Task Manager",
-            "Executive Journal"
-        ]
-    )
-
-    st.markdown("---")
-    st.caption("Executive workspace")
-
-data = st.session_state.data
-
-# ---------- HEADER ----------
-st.caption(
-    "MODISON GROUP  /  EXECUTIVE OFFICE  /  "
-    + date.today().strftime("%d %B %Y")
-)
-st.title("Good day, Ankita. 👑")
-st.markdown("---")
-
-# ---------- DASHBOARD ----------
-if page == "CEO Dashboard":
-    st.subheader("Executive Overview")
-
-    col1, col2, col3, col4 = st.columns(4)
-
-    col1.metric("Illustrative Revenue", "₹248 Cr", "+12.4%")
-    col2.metric("Operating Margin", "18.6%", "+2.1 pp")
-    col3.metric("Active Projects", str(len(data["projects"])))
-    col4.metric(
-        "Pending Tasks",
-        str(sum(1 for t in data["tasks"] if not t["done"]))
-    )
-
-    st.caption(
-        "Demonstration figures only. These are not actual "
-        "Modison Group financial results."
-    )
-
-    left, right = st.columns([1.4, 1])
-
-    with left:
-        st.subheader("Revenue Performance")
-
-        st.line_chart({
-            "Revenue (₹ Cr)": [165, 184, 213, 248]
-        })
-
-        st.subheader("Strategic Priorities")
-
-        for title, detail in [
-            ("Global Expansion",
-             "Research markets, partners and entry costs."),
-            ("AI Transformation",
-             "Identify automation opportunities and measure ROI."),
-            ("Brand Leadership",
-             "Improve customer trust and market positioning."),
-            ("Operational Excellence",
-             "Improve productivity and control costs.")
-        ]:
-            with st.container(border=True):
-                st.markdown("**" + title + "**")
-                st.write(detail)
-
-    with right:
-        st.subheader("CEO Briefing")
-
-        st.info(
-            "DECISION: Review the proposed AI investment plan."
-        )
-        st.warning(
-            "PRIORITY: Assess risks before entering a new market."
-        )
-        st.success(
-            "MILESTONE: Brand Renaissance is 82% complete."
-        )
-
-        st.subheader("Project Progress")
-
-        for project in data["projects"]:
-            st.write(project["name"])
-            st.progress(
-                max(0, min(100, project["progress"])) / 100
-            )
-            st.caption(str(project["progress"]) + "% complete")
-
-# ---------- STRATEGY ----------
-elif page == "Corporate Strategy":
-    st.header("Corporate Strategy & Intelligence")
-
-    strategies = [
-        (
-            "01. Global Expansion",
-            [
-                "Research market size and customer demand.",
-                "Compare competitors and pricing.",
-                "Evaluate local partners and regulations.",
-                "Prepare a pilot launch and risk assessment."
-            ]
-        ),
-        (
-            "02. AI Transformation",
-            [
-                "Identify repetitive processes.",
-                "Evaluate potential AI solutions.",
-                "Protect confidential company data.",
-                "Measure time saved and return on investment."
-            ]
-        ),
-        (
-            "03. Brand Leadership",
-            [
-                "Define brand positioning.",
-                "Study customer preferences.",
-                "Plan digital marketing campaigns.",
-                "Measure customer acquisition and retention."
-            ]
-        ),
-        (
-            "04. Sustainable Operations",
-            [
-                "Audit energy and material usage.",
-                "Identify efficiency improvements.",
-                "Review supplier standards.",
-                "Track environmental performance."
-            ]
-        ),
-        (
-            "05. Customer Experience",
-            [
-                "Map the customer journey.",
-                "Identify common complaints.",
-                "Improve support and response times.",
-                "Measure customer satisfaction."
-            ]
-        )
-    ]
-
-    for title, actions in strategies:
-        with st.expander(title):
-            for action in actions:
-                st.write("• " + action)
-
-    st.subheader("Create a Strategy")
-
-    with st.form("strategy_form"):
-        name = st.text_input("Strategy name")
-        objective = st.text_area("Business objective")
-        owner = st.text_input("Responsible department")
-        kpi = st.text_input("How will success be measured?")
-        submitted = st.form_submit_button("Save Strategy")
-
-    if submitted:
-        if name.strip() and objective.strip():
-            data["notes"].append({
-                "type": "Strategy",
-                "title": name,
-                "details": objective,
-                "owner": owner,
-                "kpi": kpi
-            })
-            if save_data():
-                st.success("Strategy saved successfully.")
-            else:
-                st.error("Could not save the file.")
-        else:
-            st.error("Enter a strategy name and objective.")
-
-# ---------- PROJECTS ----------
-elif page == "Project Portfolio":
-    st.header("Enterprise Project Portfolio")
-
-    st.write("Your current projects:")
-
-    for i, project in enumerate(data["projects"]):
-        with st.expander(project["name"]):
-            st.write("Department:", project["department"])
-            st.write("Budget: ₹", project["budget"], "Cr")
-            st.write("Status:", project["status"])
-            st.progress(
-                max(0, min(100, project["progress"])) / 100
-            )
-            st.write(str(project["progress"]) + "% complete")
-
-            new_progress = st.slider(
-                "Update completion",
-                0, 100, int(project["progress"]),
-                key="progress_" + str(i)
-            )
-
-            new_status = st.selectbox(
-                "Update status",
-                ["Planned", "In Progress", "Under Review", "Completed"],
-                index=[
-                    "Planned", "In Progress",
-                    "Under Review", "Completed"
-                ].index(
-                    project["status"]
-                    if project["status"] in [
-                        "Planned", "In Progress",
-                        "Under Review", "Completed"
-                    ]
-                    else "Planned"
-                ),
-                key="status_" + str(i)
-            )
-
-            if st.button("Save Project Update", key="save_" + str(i)):
-                project["progress"] = new_progress
-                project["status"] = new_status
-                if save_data():
-                    st.success("Project updated.")
-                    st.rerun()
+            if st.button("Explore this room", key=room):
+                if room not in st.session_state.visited:
+                    st.session_state.visited.append(room)
+                    st.session_state.candy += random.randint(1, 3)
+                    st.success("Secret discovered! You found enchanted candy. 🍬")
                 else:
-                    st.error("Could not save the project.")
+                    st.info("You've already explored this room.")
 
-    st.subheader("Add New Project")
+    st.divider()
+    st.write("**Your discoveries:**")
+    if st.session_state.visited:
+        for room in st.session_state.visited:
+            st.write("✅ " + room)
+    else:
+        st.write("No rooms explored yet. Pick a door!")
 
-    with st.form("project_form"):
-        name = st.text_input("Project name")
-        department = st.selectbox(
-            "Department",
-            [
-                "Technology", "Finance", "Marketing",
-                "Strategy", "Operations", "Research & Development"
-            ]
-        )
-        budget = st.number_input(
-            "Budget (₹ Cr)",
-            min_value=0.0,
-            value=1.0,
-            step=0.5
-        )
-        progress = st.slider("Initial progress (%)", 0, 100, 0)
-        status = st.selectbox(
-            "Initial status",
-            ["Planned", "In Progress", "Under Review", "Completed"]
-        )
-        submitted = st.form_submit_button("Add Project")
+# -------------------- GHOST CHAT --------------------
 
-    if submitted:
-        if name.strip():
-            data["projects"].append({
-                "name": name,
-                "department": department,
-                "budget": budget,
-                "progress": progress,
-                "status": status
-            })
-            if save_data():
-                st.success("Project added.")
-                st.rerun()
-            else:
-                st.error("Could not save project data.")
+elif page == "👻 Talk to a Ghost":
+
+    st.title("👻 Meet Casper, the Midnight Ghost")
+
+    st.markdown("""
+    <div class="ghost-card">
+        <div class="big-emoji">👻</div>
+        <h2 style="text-align:center">CASPER</h2>
+        <p style="text-align:center">
+        "Oh! A visitor! I've been alone for 200 years.
+        Please don't run away. I only haunt people on weekends."
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    for who, message in st.session_state.chat:
+        st.markdown(f"**{who}:** {message}")
+
+    with st.form("ghost_chat_form", clear_on_submit=True):
+        user_message = st.text_input(
+            "Say something to Casper...",
+            placeholder="Hello, Casper! What's your secret?"
+        )
+        submitted = st.form_submit_button("Send message 👻")
+
+    if submitted and user_message.strip():
+        st.session_state.chat.append(("You", user_message))
+
+        msg = user_message.lower()
+
+        if any(word in msg for word in ["hello", "hi", "hey"]):
+            reply = "Hello, little mortal! Welcome to my haunted home. 👻"
+        elif any(word in msg for word in ["secret", "mystery", "hide"]):
+            reply = "The mirror room hides a secret. Never trust the reflection!"
+        elif any(word in msg for word in ["scared", "afraid", "fear"]):
+            reply = "Don't be afraid. Even ghosts were beginners once!"
+        elif any(word in msg for word in ["love", "friend", "lonely"]):
+            reply = "Even a ghost needs a friend. Stay a little longer? 💜"
+        elif any(word in msg for word in ["vampire", "dracula", "blood"]):
+            reply = "The vampire upstairs is terribly dramatic. He sleeps in a coffin with velvet pillows."
+        elif any(word in msg for word in ["bye", "goodbye", "leave"]):
+            reply = "Farewell, brave visitor! The gates will remember you."
+        elif "name" in msg:
+            reply = "I'm Casper Blackthorn, the friendliest ghost in this manor!"
+        elif "why" in msg:
+            reply = "Some mysteries are older than the moon. Perhaps you'll discover the answer."
         else:
-            st.error("Please enter a project name.")
+            reply = random.choice([
+                "Ooooh! That's an interesting thought, little mortal.",
+                "The spirits are whispering, but I can't quite hear them.",
+                "Try exploring the mirror room. It might answer your question.",
+                "Boo! Sorry, I still haven't mastered a proper haunting.",
+                "Ask me about the manor's secret. I know more than I reveal!"
+            ])
 
-    st.download_button(
-        "Download Project Data",
-        json.dumps(data["projects"], indent=2),
-        file_name="modison_projects.json",
-        mime="application/json"
+        st.session_state.chat.append(("Casper 👻", reply))
+        st.rerun()
+
+    if st.button("🧹 Clear conversation"):
+        st.session_state.chat = []
+        st.rerun()
+
+    st.caption("Casper uses a collection of programmed replies, not a live AI model.")
+
+# -------------------- FORTUNE TELLER --------------------
+
+elif page == "🔮 Fortune Teller":
+
+    st.title("🔮 Madame Raven's Fortune Tent")
+
+    st.markdown("""
+    <div class="big-emoji">🔮 🕯️ 🔮</div>
+    <div class="ghost-card">
+    <p style="text-align:center">
+    "Come closer, dear visitor. The stars have been waiting
+    to reveal something mysterious about your Halloween night."
+    </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    topic = st.selectbox(
+        "What would you like to discover?",
+        ["Your Halloween destiny", "Love & friendship",
+         "Courage & adventure", "A mysterious secret"]
     )
 
-# ---------- FINANCE ----------
-elif page == "Finance & Planning":
-    st.header("Finance & Planning")
+    fortunes = {
+        "Your Halloween destiny": [
+            "A mysterious door will open when you least expect it.",
+            "Your courage will reveal a path hidden from everyone else.",
+            "The moon has chosen you to discover the manor's secret."
+        ],
+        "Love & friendship": [
+            "A small act of kindness may create an unforgettable memory.",
+            "Someone may surprise you with unexpected warmth.",
+            "The strongest bonds are built through honesty and care."
+        ],
+        "Courage & adventure": [
+            "The room you fear most may hold your greatest discovery.",
+            "A brave choice can turn a frightening night into an adventure.",
+            "You are capable of more than your fears suggest."
+        ],
+        "A mysterious secret": [
+            "Look behind the oldest portrait in the mansion.",
+            "Listen carefully when the clock strikes midnight.",
+            "The answer may be hiding in a place you have already visited."
+        ]
+    }
 
-    st.caption("All values are fictional planning examples.")
+    if st.button("✨ Reveal my fortune", use_container_width=True):
+        st.session_state.fortune = random.choice(fortunes[topic])
 
-    a, b, c = st.columns(3)
-    a.metric("Illustrative Revenue", "₹248 Cr")
-    b.metric("Operating Costs", "₹202 Cr")
-    c.metric("Operating Profit", "₹46 Cr")
+    if st.session_state.fortune:
+        st.markdown(
+            f'<div class="ghost-card"><h3>✨ The Crystal Speaks</h3>'
+            f'<p>{st.session_state.fortune}</p></div>',
+            unsafe_allow_html=True
+        )
+        st.caption("A playful Halloween fortune, for entertainment.")
 
-    st.subheader("Plan Your Business Targets")
+# -------------------- SPOOKY STORY --------------------
 
-    revenue = st.number_input(
-        "Annual revenue target (₹ Cr)",
-        min_value=0.0,
-        value=300.0,
-        step=10.0
+elif page == "📖 Spooky Story":
+
+    st.title("📖 The Book of Midnight Tales")
+
+    setting = st.selectbox(
+        "Choose your nightmare",
+        ["The Haunted Mansion", "The Enchanted Forest",
+         "The Abandoned School", "The Vampire's Castle"]
     )
 
-    margin = st.slider("Target operating margin (%)", 1, 50, 20)
-    profit = revenue * margin / 100
+    hero = st.text_input("Your character's name", value="Ankita")
 
-    x, y = st.columns(2)
-    x.metric("Revenue Target", f"₹{revenue:.1f} Cr")
-    y.metric("Target Operating Profit", f"₹{profit:.1f} Cr")
+    if st.button("🕯️ Write my spooky story", use_container_width=True):
 
-    st.subheader("Illustrative Quarterly Revenue")
-    st.bar_chart({"Revenue (₹ Cr)": [165, 184, 213, 248]})
+        openings = {
+            "The Haunted Mansion": (
+                f"On Halloween night, {hero} received a black envelope "
+                "with no address. Inside was a key and a note: "
+                "'Come home before midnight.' The strange thing was, "
+                "the mansion in the photograph belonged to nobody alive."
+            ),
+            "The Enchanted Forest": (
+                f"{hero} stepped into a forest where the trees whispered "
+                "secrets. Blue lights floated between the branches, "
+                "and every path led to the same ancient oak."
+            ),
+            "The Abandoned School": (
+                f"At 11:59 PM, {hero} heard a school bell ring inside "
+                "an abandoned building. Every classroom was empty, "
+                "except one desk with a fresh name carved into it."
+            ),
+            "The Vampire's Castle": (
+                f"{hero} arrived at a castle beneath a crimson moon. "
+                "Its mysterious owner offered a warm welcome, "
+                "but every mirror in the castle was covered."
+            )
+        }
 
-# ---------- MARKETING ----------
-elif page == "Marketing & Growth":
-    st.header("Marketing & Growth")
+        endings = [
+            "At the final moment, the hidden door opened. Behind it "
+            "was a room filled with hundreds of clocks, all ticking "
+            "backwards. One clock suddenly stopped. It bore "
+            "your character's name.",
 
-    campaigns = [
-        ("Future Forward", "Brand awareness", 35),
-        ("Beyond Borders", "International expansion", 60),
-        ("Customer First", "Customer retention", 20),
-        ("Innovation Week", "Product engagement", 15)
+            "A shadow emerged from the darkness. It wasn't a monster, "
+            "but a guardian who had been waiting for someone brave "
+            "enough to uncover the truth. The secret was finally free.",
+
+            "The moon disappeared behind a cloud. When the light "
+            "returned, the entire place was gone. In your pocket "
+            "lay a silver key, warm to the touch."
+        ]
+
+        st.session_state.story = (
+            openings[setting] + "\n\n" + random.choice(endings)
+        )
+
+    if st.session_state.story:
+        st.markdown(
+            '<div class="story">' +
+            st.session_state.story.replace("\n\n", "<br/><br/>") +
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+# -------------------- TRICK OR TREAT --------------------
+
+elif page == "🍬 Trick or Treat":
+
+    st.title("🍬 Trick or Treat Adventure")
+    st.write("Visit mysterious Halloween houses and see what you receive.")
+
+    st.metric("Your candy bag", f"{st.session_state.candy} 🍬")
+
+    houses = {
+        "🏠 The Pumpkin Cottage": [
+            ("The witch gives you a handful of candy!", 5),
+            ("A friendly skeleton hands you two sweets.", 2),
+            ("A pumpkin opens its mouth and says BOO!", 0)
+        ],
+        "🏚️ The Crooked House": [
+            ("A ghost drops a giant candy bar into your bag.", 4),
+            ("You find three mysterious chocolates.", 3),
+            ("A vampire offers you a riddle instead of candy.", 0)
+        ],
+        "🏰 The Vampire's Castle": [
+            ("The vampire gives you a royal candy treasure!", 8),
+            ("A bat delivers a tiny candy pumpkin.", 2),
+            ("The count laughs and gives you... one raisin.", 1)
+        ]
+    }
+
+    for house, rewards in houses.items():
+        with st.expander(house):
+            if st.button("Knock on the door 🚪", key=house):
+                message, reward = random.choice(rewards)
+                st.session_state.candy += reward
+                st.write(message)
+                if reward:
+                    st.success(f"You collected {reward} candy!")
+                else:
+                    st.warning("No candy this time. Try another house!")
+                st.rerun()
+
+    st.divider()
+    st.subheader("🏆 Candy Collector's Rank")
+
+    candy = st.session_state.candy
+    if candy >= 30:
+        st.success("👑 Halloween Legend — the entire town knows your name!")
+    elif candy >= 15:
+        st.success("🧙 Master Trick-or-Treater — impressive collection!")
+    elif candy >= 5:
+        st.info("🦇 Candy Explorer — keep knocking!")
+    else:
+        st.info("🎃 Halloween Rookie — your adventure has just begun!")
+
+# -------------------- QUIZ --------------------
+
+elif page == "🧠 Halloween Quiz":
+
+    st.title("🧠 Halloween Knowledge Challenge")
+
+    questions = [
+        {
+            "q": "Which vegetable is traditionally carved into a jack-o'-lantern?",
+            "options": ["Watermelon", "Pumpkin", "Cucumber", "Potato"],
+            "answer": "Pumpkin",
+            "fact": "Pumpkins are carved into glowing Halloween lanterns."
+        },
+        {
+            "q": "Which creature is traditionally associated with transforming into a bat?",
+            "options": ["Werewolf", "Witch", "Vampire", "Zombie"],
+            "answer": "Vampire",
+            "fact": "Vampires in folklore and fiction are often associated with bats."
+        },
+        {
+            "q": "What date is Halloween celebrated on?",
+            "options": ["October 13", "October 31", "November 1", "December 31"],
+            "answer": "October 31",
+            "fact": "Halloween takes place on October 31 each year."
+        },
+        {
+            "q": "What do trick-or-treaters traditionally collect?",
+            "options": ["Flowers", "Coins only", "Candy", "Books"],
+            "answer": "Candy",
+            "fact": "Candy and other treats are traditional Halloween rewards."
+        },
+        {
+            "q": "What is a group of witches commonly called in folklore?",
+            "options": ["A coven", "A colony", "A fleet", "A pack"],
+            "answer": "A coven",
+            "fact": "A coven is a gathering of witches in folklore and fiction."
+        }
     ]
 
-    for name, objective, budget in campaigns:
-        with st.container(border=True):
-            st.markdown("**" + name + "**")
-            st.write("Objective:", objective)
-            st.write("Illustrative budget: ₹", budget, "lakh")
+    if st.session_state.quiz_question is None:
+        st.session_state.quiz_question = random.sample(questions, 5)
 
-    st.subheader("Create Marketing Campaign")
-
-    with st.form("campaign_form"):
-        name = st.text_input("Campaign name")
-        audience = st.text_input("Target audience")
-        channel = st.selectbox(
-            "Channel",
-            ["Social Media", "Search", "Email", "Events", "Public Relations"]
-        )
-        objective = st.text_area("Campaign objective")
-        kpi = st.text_input("Success metric")
-        submitted = st.form_submit_button("Save Campaign")
-
-    if submitted:
-        if name.strip() and objective.strip():
-            data["notes"].append({
-                "type": "Campaign",
-                "title": name,
-                "details": objective,
-                "audience": audience,
-                "channel": channel,
-                "kpi": kpi
-            })
-            if save_data():
-                st.success("Campaign saved.")
-            else:
-                st.error("Could not save campaign.")
-        else:
-            st.error("Enter a campaign name and objective.")
-
-# ---------- BOARDROOM ----------
-elif page == "Boardroom":
-    st.header("Executive Boardroom")
-
-    st.subheader("Board Meeting Agenda")
-
-    for i, item in enumerate([
-        "Quarterly performance review",
-        "Global expansion proposal",
-        "AI investment decision",
-        "Marketing strategy",
-        "Risk and compliance",
-        "Next-quarter priorities"
-    ], 1):
-        st.write(str(i) + ". " + item)
-
-    st.subheader("Record a Decision")
-
-    with st.form("decision_form"):
-        topic = st.text_input("Decision topic")
-        decision = st.text_area("Decision details")
-        owner = st.text_input("Responsible department")
-        review_date = st.date_input("Review date")
-        status = st.selectbox(
-            "Decision status",
-            ["Proposed", "Approved", "Deferred", "Rejected"]
-        )
-        submitted = st.form_submit_button("Save Decision")
-
-    if submitted:
-        if topic.strip() and decision.strip():
-            data["decisions"].append({
-                "topic": topic,
-                "decision": decision,
-                "owner": owner,
-                "review_date": str(review_date),
-                "status": status
-            })
-            if save_data():
-                st.success("Decision recorded.")
-            else:
-                st.error("Could not save decision.")
-        else:
-            st.error("Enter the topic and decision.")
-
-    st.subheader("Decision Register")
-
-    if data["decisions"]:
-        for item in data["decisions"]:
-            with st.container(border=True):
-                st.markdown("**" + item["topic"] + "**")
-                st.write(item["decision"])
-                st.caption(
-                    item["status"] + " | Owner: " + item["owner"]
-                    + " | Review: " + item["review_date"]
+    if not st.session_state.quiz_done:
+        with st.form("halloween_quiz"):
+            answers = []
+            for i, question in enumerate(st.session_state.quiz_question):
+                st.markdown(f"### Question {i + 1}")
+                st.write(question["q"])
+                answers.append(
+                    st.radio(
+                        "Choose your answer:",
+                        question["options"],
+                        key=f"quiz_{i}"
+                    )
                 )
-    else:
-        st.info("Your decision register is empty.")
 
-# ---------- TASK MANAGER ----------
-elif page == "CEO Task Manager":
-    st.header("CEO Task Manager")
+            submitted = st.form_submit_button("🦇 Submit my answers")
 
-    with st.form("task_form"):
-        name = st.text_input("Task description")
-        priority = st.selectbox("Priority", ["High", "Medium", "Low"])
-        submitted = st.form_submit_button("Add Task")
-
-    if submitted:
-        if name.strip():
-            data["tasks"].append({
-                "name": name,
-                "priority": priority,
-                "done": False
-            })
-            if save_data():
-                st.rerun()
-            else:
-                st.error("Could not save task.")
-        else:
-            st.error("Enter a task.")
-
-    st.subheader("Your Workday")
-
-    for i, task in enumerate(data["tasks"]):
-        completed = st.checkbox(
-            task["name"] + " (" + task["priority"] + ")",
-            value=task["done"],
-            key="task_" + str(i)
-        )
-
-        if completed != task["done"]:
-            task["done"] = completed
-            save_data()
-
-    total = len(data["tasks"])
-    done = sum(1 for task in data["tasks"] if task["done"])
-
-    st.progress(done / total if total else 0)
-    st.write(f"{done} of {total} tasks completed.")
-
-    st.download_button(
-        "Download Tasks",
-        json.dumps(data["tasks"], indent=2),
-        file_name="ceo_tasks.json",
-        mime="application/json"
-    )
-
-# ---------- JOURNAL ----------
-elif page == "Executive Journal":
-    st.header("Executive Journal")
-
-    with st.form("journal_form"):
-        title = st.text_input("Entry title")
-        category = st.selectbox(
-            "Category",
-            ["Leadership", "Business Idea", "Strategy", "Research", "Reflection"]
-        )
-        details = st.text_area("Write your thoughts", height=180)
-        submitted = st.form_submit_button("Save Entry")
-
-    if submitted:
-        if title.strip() and details.strip():
-            data["notes"].append({
-                "type": category,
-                "title": title,
-                "details": details
-            })
-            if save_data():
-                st.success("Journal entry saved.")
-            else:
-                st.error("Could not save journal entry.")
-        else:
-            st.error("Enter a title and some notes.")
-
-    st.subheader("Saved Strategies, Campaigns & Notes")
-
-    if data["notes"]:
-        for item in data["notes"]:
-            with st.expander(
-                item.get("type", "Note") + " — " + item.get("title", "Untitled")
+        if submitted:
+            score = 0
+            for question, answer in zip(
+                st.session_state.quiz_question, answers
             ):
-                st.write(item.get("details", ""))
-                for key, value in item.items():
-                    if key not in ["type", "title", "details"]:
-                        st.caption(str(key).title() + ": " + str(value))
-    else:
-        st.info("No saved notes yet.")
+                if answer == question["answer"]:
+                    score += 1
 
-    st.download_button(
-        "Export Journal",
-        json.dumps(data["notes"], indent=2, ensure_ascii=False),
-        file_name="executive_journal.json",
-        mime="application/json"
+            st.session_state.quiz_score = score
+            st.session_state.quiz_done = True
+            st.rerun()
+
+    else:
+        score = st.session_state.quiz_score
+        st.markdown(f"## 🎃 Your score: {score}/5")
+
+        if score == 5:
+            st.success("Halloween Genius! You know your spooky facts.")
+        elif score >= 3:
+            st.info("Well done! You're becoming a Halloween expert.")
+        else:
+            st.warning("The spirits challenge you to try again!")
+
+        for i, question in enumerate(st.session_state.quiz_question):
+            st.write(f"**{i + 1}. {question['q']}**")
+            st.write(f"Correct answer: {question['answer']}")
+            st.caption(question["fact"])
+
+        if st.button("🔄 Play again"):
+            st.session_state.quiz_question = random.sample(questions, 5)
+            st.session_state.quiz_done = False
+            st.session_state.quiz_score = 0
+            st.rerun()
+
+# -------------------- CREATURE GALLERY --------------------
+
+elif page == "🦇 Creature Gallery":
+
+    st.title("🦇 The Creatures of Halloween")
+    st.write("Discover the legends that haunt Blackthorn Manor.")
+
+    creatures = [
+        ("🧛", "The Vampire", "Elegant, mysterious, and centuries old.",
+         "Secret ability: Hypnotic charm."),
+        ("🐺", "The Werewolf", "A fierce guardian beneath the full moon.",
+         "Secret ability: Supernatural strength."),
+        ("👻", "The Ghost", "A wandering spirit with unfinished business.",
+         "Secret ability: Passing through walls."),
+        ("🧙", "The Witch", "A keeper of ancient spells and strange potions.",
+         "Secret ability: Enchanted magic."),
+        ("🧟", "The Zombie", "A slow-moving visitor from beyond the grave.",
+         "Secret ability: Never giving up."),
+        ("🦇", "The Shadow Bat", "A silent creature that guards the towers.",
+         "Secret ability: Disappearing into darkness.")
+    ]
+
+    for i in range(0, len(creatures), 2):
+        left, right = st.columns(2)
+        for column, creature in zip(
+            [left, right], creatures[i:i + 2]
+        ):
+            emoji, name, description, ability = creature
+            with column:
+                st.markdown(
+                    f'<div class="ghost-card">'
+                    f'<div class="big-emoji">{emoji}</div>'
+                    f'<h3 style="text-align:center">{name}</h3>'
+                    f'<p>{description}</p>'
+                    f'<p><b>{ability}</b></p>'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
+
+    st.divider()
+    st.subheader("🌕 Choose your Halloween identity")
+
+    creature_choice = st.selectbox(
+        "Which creature would you be?",
+        [c[1] for c in creatures]
     )
 
-# ---------- FOOTER ----------
-st.markdown("---")
-st.caption(
-    "MODISON GROUP | CEO COMMAND CENTER | "
-    "Fictional business simulation for personal use."
-)
+    if st.button("Reveal my creature identity"):
+        selected = next(c for c in creatures if c[1] == creature_choice)
+        st.success(
+            f"You are {selected[1]}! {selected[2]} {selected[3]}"
+        )
+
+# -------------------- FOOTER --------------------
+
+st.sidebar.divider()
+st.sidebar.caption("🕸️ Blackthorn Manor • Halloween Edition")
+st.sidebar.caption("Created with Python + Streamlit")

@@ -1,158 +1,135 @@
 import streamlit as st
 import random
+import os
 
 st.set_page_config(
-    page_title="A Little Magic for My Bestie 💗",
-    page_icon="💖",
+    page_title="My Werewolf Prince",
+    page_icon="🐺",
     layout="centered"
 )
 
+# Fantasy appearance
 st.markdown("""
 <style>
 .stApp {
-    background: linear-gradient(135deg, #ffd6eb, #f5caff, #ffe6f2);
-    color: #a02d70;
+    background: linear-gradient(160deg, #100d20, #302044, #101426);
+    color: #fff1ff;
 }
-
-h1 {
-    color: #d63384;
-    text-align: center;
-    text-shadow: 0 0 15px #ff8ac4;
+h1, h2, p, label {
+    color: #fff1ff !important;
 }
-
-p, label {
-    color: #9c2870 !important;
-}
-
-.stButton > button {
-    background: linear-gradient(90deg, #ff69b4, #da70d6);
-    color: white;
-    border: 2px solid white;
-    border-radius: 30px;
+[data-testid="stChatMessage"] {
+    background: rgba(180, 140, 220, 0.12);
+    border: 1px solid #72558c;
+    border-radius: 18px;
     padding: 12px;
-    font-size: 17px;
-    box-shadow: 0 0 18px #ff69b4;
-    transition: 0.3s;
 }
-
-.stButton > button:hover {
-    box-shadow: 0 0 30px #ff1493;
-    transform: scale(1.03);
-}
-
-.magic-popup {
-    background: rgba(255, 255, 255, 0.88);
-    border: 3px solid #ff9ed2;
-    border-radius: 25px;
-    padding: 30px 20px;
-    text-align: center;
-    box-shadow: 0 0 30px #ff8ac4;
-    animation: appear 0.8s ease-out;
-    color: #b52b78;
-    font-size: 21px;
-}
-
-@keyframes appear {
-    from {opacity: 0; transform: scale(0.7);}
-    to {opacity: 1; transform: scale(1);}
-}
-
-.footer {
-    text-align: center;
-    color: #c13584;
-    font-size: 16px;
+.stChatInput textarea {
+    color: white !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-messages = {
-    "Sad 😢": [
-        "My precious girl, it's okay to cry. You don't have to be strong every second. If I were there, I'd hug you until your heart felt lighter. 💗🫂",
-        "Hey princess! 🌷 This is just a difficult chapter, not your whole story. Better days are coming, and you deserve every bit of happiness.",
-        "A little fairy told me that someone very special needs a hug today. Guess who? YOU! Sending you a million magical hugs! 🧚‍♀️💕"
-    ],
-    "Lonely 🥺": [
-        "Close your eyes for a second, bestie. Imagine me sitting beside you, holding your hand and saying, 'I'm so glad you exist.' 💞",
-        "Even on the days you feel forgotten, please remember that you are a beautiful soul who deserves love, care and kindness. 🌙💗"
-    ],
-    "Stressed 😵‍💫": [
-        "Shhh, my little star. ✨ You don't have to figure out your entire life tonight. Take a breath. One little step at a time.",
-        "Official royal decree 👑: My princess is allowed to rest, eat something yummy and stop worrying for five minutes! 💕"
-    ],
-    "Unmotivated 😴": [
-        "You are a little star, and stars shine even in the darkest skies. Keep going, my girl. I believe in you! 🌟",
-        "Your progress doesn't have to be perfect to be beautiful. Get up gently and try again. I'm cheering for you! 🎀"
-    ],
-    "Angry 😤": [
-        "Breathe in, breathe out, princess. 🌸 You can feel everything without letting one difficult moment control your whole day.",
-        "Sending you a pink bubble of peace! 🫧 Leave the stress outside for a moment. You deserve a little calm."
-    ],
-    "Happy 🥰": [
-        "ALERT! 🚨 The world's cutest smile has been spotted! Please keep smiling, bestie. You make ordinary days magical! 💖",
-        "If happiness were glitter, you'd have enough to decorate the entire universe! ✨🌷"
+st.title("🌙 My Werewolf Prince")
+st.caption("A moonlit castle. A dangerous prince. A love story.")
+
+# Add werewolf.png to the same folder as main.py
+if os.path.exists("werewolf.png"):
+    st.image("werewolf.png", use_container_width=True)
+else:
+    st.markdown("## 🐺 Prince Lucien")
+    st.caption("Upload a fantasy werewolf portrait as werewolf.png")
+
+st.markdown("### 🖤 Your future husband")
+st.write("Silver-haired Werewolf King • Romantic • Playful")
+
+# Dialogue rules
+def prince_reply(message):
+    text = message.lower()
+
+    if any(word in text for word in ["hello", "hi", "hey"]):
+        return random.choice([
+            "Hello, darling! ❤️ My little wife, ready to marry me?",
+            "There you are, my princess! I've been waiting all day for you.",
+            "Come here, sweetheart. Your wolf missed you terribly. 🐺"
+        ])
+
+    elif any(word in text for word in ["marry", "wedding", "wife"]):
+        return random.choice([
+            "YES! 💍 I've already imagined you walking towards me in a moonlit wedding dress!",
+            "My little wife! Say yes, darling, and I'll give you the moonlit castle.",
+            "*He kneels and opens a velvet ring box.* Will you marry me, my princess?"
+        ])
+
+    elif any(word in text for word in ["sad", "cry", "hurt", "upset"]):
+        return random.choice([
+            "Oh, my little princess. Who hurt you? Come here. You don't have to hide your tears from me. ❤️",
+            "*He gently opens his arms.* Come to me, darling. Tell me everything. I'm listening.",
+            "My little wife, you deserve tenderness. Tell me what's troubling your heart."
+        ])
+
+    elif any(word in text for word in ["love", "miss", "kiss"]):
+        return random.choice([
+            "I love you, darling. Now come here and give your wolf a kiss. 💋",
+            "You have no idea what you do to my heart, little princess.",
+            "*He smiles and kisses your forehead.* My favourite person in every universe."
+        ])
+
+    elif any(word in text for word in ["angry", "mad", "jealous"]):
+        return random.choice([
+            "Oh, sweetheart. Tell me what happened. I want to understand.",
+            "*His ears twitch.* My little princess is angry with me? Tell me why, darling.",
+            "Come on, love. Let's talk about it. I don't want you feeling unheard."
+        ])
+
+    elif any(word in text for word in ["bye", "goodnight", "sleep"]):
+        return random.choice([
+            "Goodnight, my little moonbeam. Dream of our castle. 🌙",
+            "Already leaving me, darling? *He smiles.* Sleep well, my princess.",
+            "Sweet dreams, my love. I'll be right here when you return."
+        ])
+
+    else:
+        return random.choice([
+            "Really, darling? ❤️ Tell me more. Your wolf is listening.",
+            "*He tilts his head, his amber eyes watching you.* And what else, my little princess?",
+            "Come sit beside me, sweetheart. I want to hear everything.",
+            "*He takes your hand and smiles.* You know you can tell me anything, don't you?"
+        ])
+
+# Start the conversation
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {
+            "role": "assistant",
+            "content": "Hello, darling. 💍 My little wife, are you ready to marry me? I've been waiting for you all evening."
+        }
     ]
-}
 
-st.markdown("<h1>🩷 A Little Magic for You 🩷</h1>",
-            unsafe_allow_html=True)
+# Display chat history
+for msg in st.session_state.messages:
+    avatar = "🐺" if msg["role"] == "assistant" else "💗"
+    with st.chat_message(msg["role"], avatar=avatar):
+        st.markdown(msg["content"])
 
-st.markdown(
-    "<p style='text-align:center;font-size:18px;'>"
-    "✨ A tiny magical world made just for you ✨</p>",
-    unsafe_allow_html=True
-)
+# Let the user type anything
+user_text = st.chat_input("Say something to your werewolf prince...")
 
-st.markdown(
-    "<p style='text-align:center;font-size:32px;'>"
-    "🦋 💗 🧚‍♀️ 💗 🦋</p>",
-    unsafe_allow_html=True
-)
+if user_text:
+    st.session_state.messages.append({
+        "role": "user",
+        "content": user_text
+    })
 
-st.write("")
+    with st.chat_message("user", avatar="💗"):
+        st.markdown(user_text)
 
-mood = st.selectbox(
-    "🌸 Tell your fairy how you're feeling...",
-    list(messages.keys())
-)
+    answer = prince_reply(user_text)
 
-if st.button("✨ Open your magical surprise 💌",
-             use_container_width=True):
-    quote = random.choice(messages[mood])
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": answer
+    })
 
-    st.session_state["message"] = quote
-    st.session_state["mood"] = mood
-
-if "message" in st.session_state:
-    st.markdown(
-        f"""
-        <div class="magic-popup">
-            <div style="font-size:38px;">🧚‍♀️ ✨ 💗 ✨</div>
-            <h3 style="color:#e754a1;">
-                A little message just for you!
-            </h3>
-            <p>{st.session_state["message"]}</p>
-            <div style="font-size:30px;">🦋 🌷 💖 🌷 🦋</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.write("")
-
-    if st.button("💖 Another magical message"):
-        st.session_state["message"] = random.choice(
-            messages[st.session_state["mood"]]
-        )
-        st.rerun()
-
-st.markdown("---")
-
-st.markdown(
-    """
-    <div class="footer">
-        🌙 Made with a little pink magic and lots of love 🌙<br>
-        Never forget how special you are, bestie. 💗
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+    with st.chat_message("assistant", avatar="🐺"):
+        st.markdown(answer)

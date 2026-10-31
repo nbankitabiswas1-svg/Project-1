@@ -1,256 +1,243 @@
 import streamlit as st
-import random
 
 st.set_page_config(
-    page_title="The Monster King's Queen",
+    page_title="Ankita Biswas | Mortison Group",
     page_icon="👑",
-    layout="centered"
+    layout="wide"
 )
 
 st.markdown("""
 <style>
 .stApp {
-    background: linear-gradient(160deg, #100812, #26101f, #100d20);
-    color: #f8e5ef;
+    background: #0b1019;
+    color: #f5f1e8;
 }
-h1, h2, h3, p, label, .stMarkdown {
-    color: #f8e5ef;
+h1, h2, h3 {
+    color: #e8c887 !important;
+}
+p, li, label {
+    color: #e4e4e7;
+}
+.hero {
+    padding: 55px 30px;
+    background: linear-gradient(120deg, #172333, #28202a, #10141d);
+    border: 1px solid #947749;
+    border-radius: 20px;
+    text-align: center;
+}
+.hero h1 {
+    font-size: 46px;
+    letter-spacing: 3px;
+}
+.hero p {
+    font-size: 18px;
+}
+.panel {
+    background: #151c28;
+    border: 1px solid #594a35;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 15px;
+}
+.gold {
+    color: #e8c887;
+    font-weight: bold;
 }
 div.stButton > button {
-    background: #54172f;
-    color: #ffe8f0;
-    border: 1px solid #c59a63;
-    border-radius: 14px;
-}
-div.stButton > button:hover {
-    background: #762746;
-    border-color: #f5d49a;
-}
-.letter {
-    background: #241323;
-    border: 1px solid #b58a65;
-    border-radius: 16px;
-    padding: 20px;
-    margin: 12px 0;
+    background: #c8a76a;
+    color: #10141d;
+    border-radius: 8px;
+    border: none;
 }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("👑 The Monster King's Queen")
-st.markdown(
-    "*Two kingdoms. One arranged marriage. "
-    "One monster who learned to love.*"
+st.markdown("""
+<div class="hero">
+<p>THE MORTISON GROUP • LEADERSHIP PROFILE</p>
+<h1>ANKITA BISWAS</h1>
+<h3>Chief Marketing Officer | Entrepreneur | Strategist</h3>
+<p>Vision beyond boundaries. Leadership beyond titles.</p>
+</div>
+""", unsafe_allow_html=True)
+
+st.write("")
+
+# Navigation
+page = st.radio(
+    "Explore the empire",
+    [
+        "Executive Overview",
+        "Education",
+        "Career Journey",
+        "My Business",
+        "Leadership Vision"
+    ],
+    horizontal=True
 )
+
+st.markdown("---")
+
+if page == "Executive Overview":
+    st.title("The Woman Behind the Vision")
+
+    st.markdown("""
+    <div class="panel">
+    Ankita Biswas is presented as a visionary business leader
+    serving as Chief Marketing Officer of Mortison Group.
+    With a foundation in artificial intelligence, computer
+    science, corporate experience and advanced business
+    education, she brings technology and strategy together.
+    </div>
+    """, unsafe_allow_html=True)
+
+    a, b, c = st.columns(3)
+
+    a.metric("Education", "BTech + MBA")
+    b.metric("Work Experience", "3 Years")
+    c.metric("Leadership", "CMO")
+
+    st.subheader("Her Philosophy")
+    st.write(
+        '"Think like a strategist. Build like an entrepreneur. '
+        'Lead with courage."'
+    )
+
+    st.info(
+        "This is an aspirational profile. Add verified "
+        "achievements as your real career progresses."
+    )
+
+elif page == "Education":
+    st.title("Education & Excellence")
+
+    st.markdown("""
+    <div class="panel">
+    <h3>01 • BTech in Computer Science Engineering</h3>
+    <p>Specialization: Artificial Intelligence & Machine Learning</p>
+    <p>Duration: 4 Years</p>
+    <p>Focus: Programming, intelligent systems, data, "
+    "technology and analytical thinking.</p>
+    </div>
+    """.replace('"', ''), unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="panel">
+    <h3>02 • Professional Experience</h3>
+    <p>Duration: 3 Years</p>
+    <p>Developed practical knowledge of business operations,
+    teamwork, professional communication and strategy.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="panel">
+    <h3>03 • Harvard Business School</h3>
+    <p>Goal: MBA in Business Administration</p>
+    <p>Aspirational achievement: Top student in the class.</p>
+    <p>Areas of interest: Leadership, finance, marketing,
+    entrepreneurship and global business.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+elif page == "Career Journey":
+    st.title("The Journey to the Boardroom")
+
+    st.markdown("""
+    <div class="panel">
+    <h3>Chapter I — The Technologist</h3>
+    Built a foundation in AI, machine learning and
+    computer science.
+    </div>
+    <div class="panel">
+    <h3>Chapter II — The Professional</h3>
+    Spent three years learning how companies operate,
+    solve problems and create value.
+    </div>
+    <div class="panel">
+    <h3>Chapter III — The Harvard Dream</h3>
+    Pursued advanced business education, developing
+    the mindset to lead teams and make strategic decisions.
+    </div>
+    <div class="panel">
+    <h3>Chapter IV — The Executive</h3>
+    Aspires to lead marketing, brand strategy, growth
+    and innovation at Mortison Group.
+    </div>
+    """, unsafe_allow_html=True)
+
+elif page == "My Business":
+    st.title("Founder. Creator. Entrepreneur.")
+
+    business_name = st.text_input(
+        "Give your own company a name",
+        "Ankita Global Ventures"
+    )
+
+    industry = st.selectbox(
+        "Choose your business sector",
+        [
+            "AI & Technology",
+            "Luxury & Lifestyle",
+            "Beauty & Fashion",
+            "Global Consulting",
+            "Finance & Investments",
+            "A business empire across industries"
+        ]
+    )
+
+    vision = st.text_area(
+        "Describe your business vision",
+        "Building an innovative global company that "
+        "creates value, empowers people and transforms industries."
+    )
+
+    if st.button("Create my founder profile"):
+        st.success("Your entrepreneurial vision is ready!")
+
+        st.markdown(f"""
+        <div class="panel">
+        <h2>{business_name}</h2>
+        <p><b>Founder:</b> Ankita Biswas</p>
+        <p><b>Industry:</b> {industry}</p>
+        <p><b>Vision:</b> {vision}</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+elif page == "Leadership Vision":
+    st.title("A Vision for the Future")
+
+    st.markdown("""
+    <div class="panel">
+    <h3>01 • Global Leadership</h3>
+    Build the skills to lead international teams
+    and understand global markets.
+    </div>
+    <div class="panel">
+    <h3>02 • Technology Meets Business</h3>
+    Use AI and data to make smarter business decisions
+    and discover new opportunities.
+    </div>
+    <div class="panel">
+    <h3>03 • Build Something of My Own</h3>
+    Create a sustainable business with a distinctive
+    identity, strong values and long-term ambition.
+    </div>
+    <div class="panel">
+    <h3>04 • A Legacy That Matters</h3>
+    Become a leader whose success creates opportunities
+    for others.
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.balloons()
 
 st.markdown("---")
 
 st.markdown("""
-<div class="letter">
-<h3>💌 A letter from your husband</h3>
-<p>To my Queen,</p>
-<p>The entire world calls me a monster.
-They say I have no heart, no mercy, no love.</p>
-<p>Perhaps they were right. Until you.</p>
-<p>You are the only person who dares to
-argue with me, steal my cloak, and fall asleep
-in my throne room as if you own the world.</p>
-<p>You do, little queen. At least, my world.</p>
-<p>Yours, even when the kingdoms fall,<br>
-<strong>Your Monster King 🖤</strong></p>
+<div style="text-align:center; padding:20px;">
+<h3>ANKITA BISWAS</h3>
+<p>Ambition is the beginning. Execution builds the empire.</p>
+<p>© Personal aspirational portfolio</p>
 </div>
 """, unsafe_allow_html=True)
-
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {
-            "role": "assistant",
-            "content": (
-                "The great doors of the throne room open. "
-                "The feared King rises from his black throne. "
-                "His cold expression softens when he sees you. "
-                "\n\n'You are finally here, my queen. "
-                "Come here. I have been waiting for you.'"
-            )
-        }
-    ]
-
-def king_reply(message):
-    text = message.lower()
-
-    if any(word in text for word in
-           ["hello", "hi", "hey", "darling"]):
-        return random.choice([
-            "There you are, my little queen. "
-            "Do you know how many times I have looked at that door, "
-            "waiting for you? Come here. 🖤",
-            "Hello, wife. The entire royal council fears me, "
-            "yet I have been waiting like a fool for one message "
-            "from you.",
-            "My queen! Finally. I was about to send the royal guards "
-            "to ask why my favourite person had forgotten me."
-        ])
-
-    if any(word in text for word in
-           ["how are you", "how r u", "are you okay"]):
-        return random.choice([
-            "The kingdom is troublesome, the council is unbearable, "
-            "and I have a mountain of work. But you are here now, "
-            "so tell me about your day, my heart.",
-            "I was a monster before breakfast, a tyrant by noon, "
-            "and a miserable husband missing his wife by evening. "
-            "I am perfectly fine, darling. Come sit beside me.",
-            "Better now that my queen has asked. And you? "
-            "Tell me honestly. I want to hear everything."
-        ])
-
-    if any(word in text for word in
-           ["love you", "i love u", "i love you"]):
-        return (
-            "The King goes completely still. The man who has "
-            "never feared a battlefield looks at you as though "
-            "you hold his entire soul.\n\n"
-            "'Say it again, little queen. I have conquered "
-            "kingdoms, but nothing has ever conquered me "
-            "the way your love has.' ❤️"
-        )
-
-    if any(word in text for word in
-           ["miss you", "miss u", "where are you"]):
-        return (
-            "He puts down his crown and opens his arms.\n\n"
-            "'I am right here, my wife. I miss you even when "
-            "you are only one corridor away. Come to me. "
-            "Let the kingdoms wait.'"
-        )
-
-    if any(word in text for word in
-           ["angry", "mad", "hate you", "upset"]):
-        return (
-            "His expression changes. He kneels before you, "
-            "setting his crown aside.\n\n"
-            "'Look at me, my queen. I will not command you "
-            "to forgive me. Tell me what I did wrong. "
-            "You deserve to be heard, especially by me.'"
-        )
-
-    if any(word in text for word in
-           ["sorry", "apologize", "forgive"]):
-        return (
-            "'Come here, my love.' His voice becomes quiet. "
-            "'You never need to be afraid of telling me the truth. "
-            "We are husband and wife, not enemies on a battlefield.'"
-        )
-
-    if any(word in text for word in
-           ["kiss", "hug", "cuddle"]):
-        return (
-            "The fearsome King dismisses his guards with one look "
-            "and draws you into his warm embrace.\n\n"
-            "'Five minutes, you said? No, my queen. "
-            "I am keeping you here until you stop looking so "
-            "adorably tired.' 💋"
-        )
-
-    if any(word in text for word in
-           ["goodnight", "good night", "sleep"]):
-        return (
-            "He pulls a velvet blanket over you and brushes "
-            "a kiss against your forehead.\n\n"
-            "'Sleep, my little queen. I shall be right beside you. "
-            "Let the world tremble outside these walls. "
-            "Tonight, you need only rest.' 🌙"
-        )
-
-    if any(word in text for word in
-           ["queen", "kingdom", "king"]):
-        return (
-            "'Your kingdom and mine may have been enemies "
-            "for a hundred years,' he says, taking your hand. "
-            "'But you are my wife. No crown, treaty, or throne "
-            "will ever matter more to me than you.'"
-        )
-
-    return random.choice([
-        "The King listens carefully, his usual cold gaze "
-        "softening. 'Go on, my queen. I am listening.'",
-        "'You know,' he murmurs, 'I used to silence every "
-        "person who entered this room. Now I wait for you "
-        "to tell me stories. Look what you have done to me.'",
-        "He reaches for your hand. 'Tell me more, darling. "
-        "I want to know what is happening inside that "
-        "clever little head of yours.'",
-        "'The royal council can wait,' he declares, closing "
-        "his book. 'My wife is speaking, and that is far "
-        "more important.'"
-    ])
-
-st.markdown("### 🕯️ Speak to your husband")
-st.caption(
-    "You are the Queen of the neighbouring kingdom. "
-    "He is waiting for your message."
-)
-
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.write(msg["content"])
-
-if prompt := st.chat_input("Write a message to your king..."):
-    st.session_state.messages.append(
-        {"role": "user", "content": prompt}
-    )
-    reply = king_reply(prompt)
-    st.session_state.messages.append(
-        {"role": "assistant", "content": reply}
-    )
-    st.rerun()
-
-st.markdown("---")
-
-st.markdown("### 💌 A secret from the Monster King")
-
-if st.button("Read his most secret letter"):
-    st.markdown("""
-    <div class="letter">
-    <p>My beloved wife,</p>
-    <p>I was taught that a king must never bend,
-    never apologise, and never show weakness.</p>
-    <p>Then you looked at me and asked why I was so cruel.</p>
-    <p>No one had ever asked me to be better.
-    They had only asked me to be stronger.</p>
-    <p>You did not remove the monster from me in a day.
-    You taught me that I could choose what kind of man
-    I wanted to become.</p>
-    <p>If the world remembers me as a monster,
-    let it. You will know the man who loves you.</p>
-    <p>Forever yours,<br><strong>Your King 🖤</strong></p>
-    </div>
-    """, unsafe_allow_html=True)
-
-if st.button("🌹 Let him send me roses"):
-    st.balloons()
-    st.success(
-        "A thousand crimson roses arrive at your castle. "
-        "Their card reads: 'For my queen, who made my "
-        "dark world bloom.' — Your devoted husband"
-    )
-
-if st.button("🔄 Begin our story again"):
-    st.session_state.messages = [
-        {
-            "role": "assistant",
-            "content": (
-                "The doors of the throne room open. "
-                "'My queen, you have returned. "
-                "Come here. I have missed you.'"
-            )
-        }
-    ]
-    st.rerun()
-
-st.markdown("---")
-st.markdown(
-    "<p style='text-align:center;'>"
-    "🖤 Two crowns. Two kingdoms. One love. 🖤"
-    "</p>",
-    unsafe_allow_html=True
-)
